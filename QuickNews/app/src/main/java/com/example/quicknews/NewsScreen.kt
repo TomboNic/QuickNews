@@ -1,9 +1,7 @@
 package com.example.quicknews
 
 import android.app.Activity
-import android.os.Build
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -35,8 +33,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -57,7 +53,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 
 
 @Composable
@@ -203,7 +198,7 @@ fun TopBar() {
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 6.dp)
                 .height(48.dp),
             leadingIcon = {
                 Icon(
@@ -221,7 +216,7 @@ fun TopBar() {
 }
 
 @Composable
-fun NewsItems(news: News) {
+fun NewsItems(article: Article) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -229,15 +224,13 @@ fun NewsItems(news: News) {
             .padding(8.dp)
             .clip(RoundedCornerShape(12.dp))
     ) {
-        // Image
         AsyncImage(
-            model = news.image,
+            model = article.urlToImage,
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
 
-        // Gradient overlay for better text visibility
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -255,18 +248,16 @@ fun NewsItems(news: News) {
                 .align(Alignment.BottomStart)
                 .padding(16.dp)
         ) {
-            news.title?.let {
-                Text(
-                    text = it,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+            Text(
+                text = article.title,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
             Spacer(modifier = Modifier.height(4.dp))
-            news.description?.let {
+            article.description?.let {
                 Text(
                     text = it,
                     fontSize = 14.sp,
@@ -286,7 +277,7 @@ fun TopicsRow() {
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 4.dp)
     ) {
         items(categories) { category ->
             RoundedButton(text = category) { }
@@ -311,14 +302,14 @@ fun RoundedButton(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun ContentScreen(newsList: List<News>) {
+fun ContentScreen(articleList: List<Article>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        items(newsList) { news ->
-            NewsItems(news)
+        items(articleList) { articles ->
+            NewsItems(articles)
         }
     }
 }

@@ -21,29 +21,30 @@ class NewsViewModel : ViewModel() {
         viewModelScope.launch {
             _newsState.value = _newsState.value.copy(loading = true, error = null)
             try {
-                val response = NewsService.getNews(country = "us", category = null)
-                println("Fetched News: ${response.data}")
-                _newsState.value = response.data?.let {
-                    _newsState.value.copy(
-                        list = it,
+                val response = RetrofitInstance.api.getTopHeadlines(country = "us", apiKey = "2c39949b0fff4e74964f7b1d5d6cebcf")
+                response.body()?.articles?.let { articles ->
+                    _newsState.value = _newsState.value.copy(
+                        list = articles,
                         loading = false,
                         error = null
                     )
-                }!!
+                } ?: run {
+                    _newsState.value = _newsState.value.copy(
+                        loading = false,
+                        error = "No se encontraron artículos"
+                    )
+                }
             } catch (e: HttpException) {
-                println("HTTP error fetching news: ${e.message}")
                 _newsState.value = _newsState.value.copy(
                     loading = false,
                     error = "Error de red: ${e.message}"
                 )
             } catch (e: IOException) {
-                println("IO error fetching news: ${e.message}")
                 _newsState.value = _newsState.value.copy(
                     loading = false,
                     error = "Error de conexión: ${e.message}"
                 )
             } catch (e: Exception) {
-                println("Error fetching news: ${e.message}")
                 _newsState.value = _newsState.value.copy(
                     loading = false,
                     error = "Error inesperado: ${e.message}"
@@ -54,7 +55,7 @@ class NewsViewModel : ViewModel() {
 
     data class NewsState(
         val loading: Boolean = true,
-        val list: List<News> = emptyList(),
+        val list: List<Article> = emptyList(),
         val error: String? = null
     )
 }

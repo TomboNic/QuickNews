@@ -1,24 +1,29 @@
 package com.example.quicknews
 
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-private val retrofit = Retrofit.Builder().baseUrl("https://api.mediastack.com/v1/")
-    .addConverterFactory(GsonConverterFactory.create())
-    .build()
+object RetrofitInstance {
 
-val NewsService = retrofit.create(ApiService::class.java)
+    private val retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl("https://newsapi.org/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
 
-interface ApiService{
+    val api: NewsApiService by lazy {
+        retrofit.create(NewsApiService::class.java)
+    }
+}
 
-    @GET("news")
-    suspend fun getNews(
-        @Query("access_key") apiKey: String = "3246856e86f1b7f684ffb12020622be6",
-        @Query("countries") country: String?,
-        @Query("categories") category: String?,
-        @Query("languages") language: String? = "en"
-    ): NewsResponse
-
+interface NewsApiService {
+    @GET("v2/top-headlines")
+    suspend fun getTopHeadlines(
+        @Query("country") country: String,
+        @Query("apiKey") apiKey: String
+    ): Response<NewsResponse>
 }
