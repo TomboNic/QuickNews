@@ -42,9 +42,7 @@ import coil.compose.AsyncImage
 
 
 @Composable
-fun DetailScreen() {
-    val newsViewModel: NewsViewModel = viewModel()
-    val viewState by newsViewModel.newsState
+fun DetailScreen(article: Article) {
 
     val darkTheme = isSystemInDarkTheme()
     val backgroundColor = MaterialTheme.colorScheme.background
@@ -68,41 +66,22 @@ fun DetailScreen() {
     Scaffold(
         topBar = { DetailTopBar() }
     ) { paddingValues ->
-        when {
-            viewState.loading -> {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .wrapContentSize(Alignment.Center)
-                )
-            }
+        CircularProgressIndicator(
+            modifier = Modifier
+                .fillMaxSize()
+                .wrapContentSize(Alignment.Center)
+        )
 
-            viewState.error != null -> {
-                Text("ERROR OCCURRED: ${viewState.error}", modifier = Modifier.padding(16.dp))
-            }
-
-            viewState.list.isEmpty() -> {
-                Text("No articles available", modifier = Modifier.padding(16.dp))
-            }
-
-            else -> {
-                Column(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize()
-                ) {
-                    // Use the first article in the list, or handle empty list case
-                    val article = viewState.list.firstOrNull()
-                    if (article != null) {
-                        Body(article = article)
-                    } else {
-                        Text("No article details available", modifier = Modifier.padding(16.dp))
-                    }
-                }
-            }
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
+            Body(article = article)
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -143,7 +122,7 @@ fun Body(article: Article) {
         Spacer(modifier = Modifier.height(10.dp))
         article.author?.let { Text(text = it, color = Color(0xFF637587)) }
         Spacer(modifier = Modifier.height(10.dp))
-        Text(text = article.publishedAt.substring(0,10), color = Color(0xFF637587))
+        Text(text = article.publishedAt.substring(0, 10), color = Color(0xFF637587))
         Spacer(modifier = Modifier.height(15.dp))
         AsyncImage(
             model = article.urlToImage,
@@ -152,17 +131,17 @@ fun Body(article: Article) {
             contentScale = ContentScale.Crop
         )
         Spacer(modifier = Modifier.height(15.dp))
-        article.content?.substring(0,200).let {
+        article.content?.substring(0, 200).let {
             if (it != null) {
                 Text(text = it)
             }
         }
-        article.content?.substring(0,200).let {
+        article.content?.substring(0, 200).let {
             if (it != null) {
                 Text(text = it)
             }
         }
-        article.content?.substring(0,200).let {
+        article.content?.substring(0, 200).let {
             if (it != null) {
                 Text(text = it)
             }

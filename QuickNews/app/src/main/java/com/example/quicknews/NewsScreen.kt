@@ -56,9 +56,7 @@ import coil.compose.AsyncImage
 
 
 @Composable
-fun NewsScreen() {
-    val newsViewModel: NewsViewModel = viewModel()
-    val viewState by newsViewModel.newsState
+fun NewsScreen(onDetailClick: () -> Unit, viewState: NewsViewModel.NewsState) {
 
     val darkTheme = isSystemInDarkTheme()
     val backgroundColor = MaterialTheme.colorScheme.background
@@ -99,7 +97,7 @@ fun NewsScreen() {
                         .fillMaxSize()
                 ) {
                     TopicsRow()
-                    ContentScreen(viewState.list)
+                    ContentScreen(viewState.list, onDetailClick)
                 }
             }
         }
@@ -216,13 +214,14 @@ fun TopBar() {
 }
 
 @Composable
-fun NewsItems(article: Article) {
+fun NewsItems(article: Article, onDetailClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
             .padding(8.dp)
             .clip(RoundedCornerShape(12.dp))
+            .clickable { onDetailClick() }
     ) {
         AsyncImage(
             model = article.urlToImage,
@@ -302,14 +301,14 @@ fun RoundedButton(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun ContentScreen(articleList: List<Article>) {
+fun ContentScreen(articleList: List<Article>, onDetailClick: () -> Unit) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(articleList) { articles ->
-            NewsItems(articles)
+            NewsItems(articles, onDetailClick)
         }
     }
 }
