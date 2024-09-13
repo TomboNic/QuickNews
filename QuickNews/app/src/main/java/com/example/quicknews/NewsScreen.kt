@@ -34,7 +34,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,12 +50,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 
 
 @Composable
-fun NewsScreen(onDetailClick: () -> Unit, viewState: NewsViewModel.NewsState) {
+fun NewsScreen(onDetailClick: (Article) -> Unit, viewState: NewsViewModel.NewsState) {
 
     val darkTheme = isSystemInDarkTheme()
     val backgroundColor = MaterialTheme.colorScheme.background
@@ -214,14 +212,14 @@ fun TopBar() {
 }
 
 @Composable
-fun NewsItems(article: Article, onDetailClick: () -> Unit) {
+fun NewsItems(article: Article, onDetailClick: (Article) -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)
             .padding(8.dp)
             .clip(RoundedCornerShape(12.dp))
-            .clickable { onDetailClick() }
+            .clickable { onDetailClick(article) }
     ) {
         AsyncImage(
             model = article.urlToImage,
@@ -301,7 +299,7 @@ fun RoundedButton(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun ContentScreen(articleList: List<Article>, onDetailClick: () -> Unit) {
+fun ContentScreen(articleList: List<Article>, onDetailClick: (Article) -> Unit) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize(),

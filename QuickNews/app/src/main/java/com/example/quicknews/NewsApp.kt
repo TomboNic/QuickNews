@@ -23,9 +23,9 @@ fun NewsApp (navController: NavHostController) {
             })
         }
         composable(Screens.DetailScreen.route) {
-            val article = navController.previousBackStackEntry?.savedStateHandle?.get<Article>("article")
-            article?.let {
-                DetailScreen(article = it)
+            val article = navController.previousBackStackEntry?.savedStateHandle?.get<Article>("new")
+            if (article != null) {
+                DetailScreen(article = article)
             }
         }
     }
