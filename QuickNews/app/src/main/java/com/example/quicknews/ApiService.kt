@@ -10,7 +10,7 @@ object RetrofitInstance {
 
     private val retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl("https://newsapi.org/")
+            .baseUrl("https://newsapi.org/v2/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -21,9 +21,17 @@ object RetrofitInstance {
 }
 
 interface NewsApiService {
-    @GET("v2/top-headlines")
+    @GET("top-headlines")
     suspend fun getTopHeadlines(
         @Query("country") country: String,
         @Query("apiKey") apiKey: String
+    ): Response<NewsResponse>
+
+    @GET("everything")
+    suspend fun getEverything(
+        @Query("q") query: String,
+        @Query("apiKey") apiKey: String,
+        @Query("pageSize") pageSize: Int = 40,
+        @Query("page") page: Int = 1
     ): Response<NewsResponse>
 }

@@ -13,15 +13,21 @@ class NewsViewModel : ViewModel() {
     private val _newsState = mutableStateOf(NewsState())
     val newsState: State<NewsState> = _newsState
 
+    private val _currentCategory = mutableStateOf("general")
+    val currentCategory: State<String> = _currentCategory
+
     init {
-        fetchNews()
+        fetchNews(_currentCategory.value)
     }
 
-    private fun fetchNews() {
+    private fun fetchNews(query: String) {
         viewModelScope.launch {
             _newsState.value = _newsState.value.copy(loading = true, error = null)
             try {
-                val response = RetrofitInstance.api.getTopHeadlines(country = "us", apiKey = "2c39949b0fff4e74964f7b1d5d6cebcf")
+                val response = RetrofitInstance.api.getEverything(
+                    query = query,
+                    apiKey = "2c39949b0fff4e74964f7b1d5d6cebcf"
+                )
                 response.body()?.articles?.let { articles ->
                     _newsState.value = _newsState.value.copy(
                         list = articles,
@@ -49,8 +55,15 @@ class NewsViewModel : ViewModel() {
                     loading = false,
                     error = "Error inesperado: ${e.message}"
                 )
+            } finally {
+                _newsState.value = _newsState.value.copy(loading = false)
             }
         }
+    }
+
+    fun changeCategory(newCategory: String) {
+        _currentCategory.value = newCategory
+        fetchNews(newCategory)
     }
 
     data class NewsState(

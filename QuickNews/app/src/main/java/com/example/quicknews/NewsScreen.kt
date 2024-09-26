@@ -54,7 +54,12 @@ import coil.compose.AsyncImage
 
 
 @Composable
-fun NewsScreen(onDetailClick: (Article) -> Unit, viewState: NewsViewModel.NewsState) {
+fun NewsScreen(
+    onDetailClick: (Article) -> Unit,
+    viewState: NewsViewModel.NewsState,
+    currentCategory: String,
+    onCategoryChange: (String) -> Unit
+) {
 
     val darkTheme = isSystemInDarkTheme()
     val backgroundColor = MaterialTheme.colorScheme.background
@@ -70,31 +75,35 @@ fun NewsScreen(onDetailClick: (Article) -> Unit, viewState: NewsViewModel.NewsSt
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
 
             window.navigationBarColor = bottomBarColor.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !darkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars =
+                !darkTheme
         }
     }
 
     Scaffold(
-        topBar = { TopBar() },
+        topBar = { TopBar(currentCategory, onCategoryChange) },
         bottomBar = { BottomBar(backgroundColor = bottomBarColor) },
         containerColor = backgroundColor
     ) { paddingValues ->
         when {
             viewState.loading -> {
-                CircularProgressIndicator(modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.Center))
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.Center)
+                )
             }
+
             viewState.error != null -> {
                 Text("ERROR OCCURRED")
             }
+
             else -> {
                 Column(
                     modifier = Modifier
                         .padding(paddingValues)
                         .fillMaxSize()
                 ) {
-                    TopicsRow()
                     ContentScreen(viewState.list, onDetailClick)
                 }
             }
@@ -146,7 +155,7 @@ fun BottomBarIcon(icon: Int, contentDescription: String) {
 
 
 @Composable
-fun TopBar() {
+fun TopBar(currentCategory: String, onCategoryChange: (String) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -208,7 +217,9 @@ fun TopBar() {
             },
             placeholder = { Text(text = "Search News", fontSize = 13.sp) }
         )
+        TopicsRow(currentCategory, onCategoryChange)
     }
+
 }
 
 @Composable
@@ -239,7 +250,6 @@ fun NewsItems(article: Article, onDetailClick: (Article) -> Unit) {
                 )
         )
 
-        // Text content
         Column(
             modifier = Modifier
                 .align(Alignment.BottomStart)
@@ -268,22 +278,26 @@ fun NewsItems(article: Article, onDetailClick: (Article) -> Unit) {
 }
 
 @Composable
-fun TopicsRow() {
-    val categories = listOf("Technology", "Business", "Health", "Sports", "Entertainment")
+fun TopicsRow(currentCategory: String, onCategoryChange: (String) -> Unit) {
+    val categories =
+        listOf("general", "technology", "business", "health", "sports", "entertainment")
 
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp)
     ) {
         items(categories) { category ->
-            RoundedButton(text = category) { }
+            RoundedButton(
+                text = category.capitalize(),
+                isSelected = category == currentCategory,
+                onClick = { onCategoryChange(category) }
+            )
         }
     }
 }
 
 @Composable
-fun RoundedButton(text: String, onClick: () -> Unit) {
+fun RoundedButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(40),
@@ -291,10 +305,10 @@ fun RoundedButton(text: String, onClick: () -> Unit) {
             .padding(8.dp)
             .height(34.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFFE8EDF2)
+            containerColor = if (isSelected) Color.Black else Color(0xFFE8EDF2)
         )
     ) {
-        Text(text = text, color = Color.Black)
+        Text(text = text, color = if (isSelected) Color.White else Color.Black)
     }
 }
 
@@ -306,7 +320,9 @@ fun ContentScreen(articleList: List<Article>, onDetailClick: (Article) -> Unit) 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(articleList) { articles ->
-            NewsItems(articles, onDetailClick)
+            if (articles.title != "[Removed]" && articles.urlToImage != null) {
+                NewsItems(articles, onDetailClick)
+            }
         }
     }
 }

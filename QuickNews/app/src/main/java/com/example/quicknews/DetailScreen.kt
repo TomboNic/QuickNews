@@ -1,6 +1,7 @@
 package com.example.quicknews
 
 import android.app.Activity
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -66,12 +69,6 @@ fun DetailScreen(article: Article) {
     Scaffold(
         topBar = { DetailTopBar() }
     ) { paddingValues ->
-        CircularProgressIndicator(
-            modifier = Modifier
-                .fillMaxSize()
-                .wrapContentSize(Alignment.Center)
-        )
-
         Column(
             modifier = Modifier
                 .padding(paddingValues)
@@ -115,8 +112,11 @@ fun DetailTopBar() {
 
 @Composable
 fun Body(article: Article) {
+
+    val scrollState = rememberScrollState()
+
     Column(
-        modifier = Modifier.padding(horizontal = 16.dp)
+        modifier = Modifier.padding(horizontal = 16.dp).verticalScroll(scrollState)
     ) {
         Text(text = article.title, fontSize = 22.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(10.dp))
