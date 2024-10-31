@@ -1,4 +1,4 @@
-package com.example.quicknews
+package com.example.quicknews.model
 
 import retrofit2.Response
 import retrofit2.Retrofit

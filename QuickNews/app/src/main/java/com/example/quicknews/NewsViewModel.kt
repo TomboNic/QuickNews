@@ -4,11 +4,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.State
 import androidx.lifecycle.viewModelScope
+import com.example.quicknews.model.Article
+import com.example.quicknews.model.ArticleDao
+import com.example.quicknews.model.ArticleRepository
+import com.example.quicknews.model.RetrofitInstance
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-class NewsViewModel : ViewModel() {
+class NewsViewModel(private val articleRepository: ArticleRepository) : ViewModel() {
 
     private val _newsState = mutableStateOf(NewsState())
     val newsState: State<NewsState> = _newsState
@@ -16,8 +22,20 @@ class NewsViewModel : ViewModel() {
     private val _currentCategory = mutableStateOf("general")
     val currentCategory: State<String> = _currentCategory
 
+    lateinit var getLocalNews: Flow<List<Article>>
+
     init {
         fetchNews(_currentCategory.value)
+        getLocalNews = articleRepository.getAllArticles()
+    }
+
+    fun addArticle(article: Article) {
+        viewModelScope.launch(Dispatchers.IO) {
+            articleRepository.addArticle(article)
+        }
+    }
+    fun getArticleById(id: Int): Flow<Article> {
+        return articleRepository.getArticleById(id)
     }
 
     private fun fetchNews(query: String) {

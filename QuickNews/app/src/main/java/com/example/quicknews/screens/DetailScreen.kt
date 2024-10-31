@@ -1,7 +1,6 @@
-package com.example.quicknews
+package com.example.quicknews.screens
 
 import android.app.Activity
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,13 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,8 +35,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.example.quicknews.model.Article
+import com.example.quicknews.R
 
 
 @Composable
@@ -67,7 +63,7 @@ fun DetailScreen(article: Article) {
     }
 
     Scaffold(
-        topBar = { DetailTopBar() }
+        topBar = { DetailTopBar(article) }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -82,7 +78,7 @@ fun DetailScreen(article: Article) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailTopBar() {
+fun DetailTopBar(article: Article) {
     TopAppBar(
         title = {
             Box(
@@ -90,7 +86,7 @@ fun DetailTopBar() {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "The New York Times",
+                    text = article.source.name,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                     fontSize = 18.sp
@@ -116,13 +112,15 @@ fun Body(article: Article) {
     val scrollState = rememberScrollState()
 
     Column(
-        modifier = Modifier.padding(horizontal = 16.dp).verticalScroll(scrollState)
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .verticalScroll(scrollState)
     ) {
         Text(text = article.title, fontSize = 22.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(10.dp))
-        article.author?.let { Text(text = it, color = Color(0xFF637587)) }
+        article.author?.let { Text(text = "Author: $it", color = Color(0xFF637587)) }
         Spacer(modifier = Modifier.height(10.dp))
-        Text(text = article.publishedAt.substring(0, 10), color = Color(0xFF637587))
+        Text(text = "Date: " + article.publishedAt.substring(0, 10), color = Color(0xFF637587))
         Spacer(modifier = Modifier.height(15.dp))
         AsyncImage(
             model = article.urlToImage,

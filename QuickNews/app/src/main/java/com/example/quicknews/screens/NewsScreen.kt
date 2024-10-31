@@ -1,4 +1,4 @@
-package com.example.quicknews
+package com.example.quicknews.screens
 
 import android.app.Activity
 import androidx.compose.material3.CircularProgressIndicator
@@ -51,6 +51,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import coil.compose.AsyncImage
+import com.example.quicknews.model.Article
+import com.example.quicknews.NewsViewModel
+import com.example.quicknews.R
 
 
 @Composable

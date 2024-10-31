@@ -3,11 +3,14 @@ package com.example.quicknews
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import com.example.quicknews.model.Article
+import com.example.quicknews.model.Screens
+import com.example.quicknews.screens.DetailScreen
+import com.example.quicknews.screens.NewsScreen
+
 
 @Composable
 fun NewsApp(navController: NavHostController) {
