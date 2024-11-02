@@ -3,10 +3,12 @@ package com.example.quicknews
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.State
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.quicknews.model.Article
 import com.example.quicknews.model.ArticleDao
 import com.example.quicknews.model.ArticleRepository
+import com.example.quicknews.model.Graph
 import com.example.quicknews.model.RetrofitInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -14,7 +16,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-class NewsViewModel(private val articleRepository: ArticleRepository) : ViewModel() {
+class NewsViewModel(private val articleRepository: ArticleRepository = Graph.articleRepository) : ViewModel() {
 
     private val _newsState = mutableStateOf(NewsState())
     val newsState: State<NewsState> = _newsState
@@ -89,4 +91,14 @@ class NewsViewModel(private val articleRepository: ArticleRepository) : ViewMode
         val list: List<Article> = emptyList(),
         val error: String? = null
     )
+}
+
+class ArticleViewModelFactory(private val repository: ArticleRepository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(NewsViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return NewsViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
 }

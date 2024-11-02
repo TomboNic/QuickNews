@@ -5,12 +5,17 @@ import androidx.room.Room
 
 object Graph {
     lateinit var database: ArticleDatabase
+        private set
 
     val articleRepository by lazy {
-        ArticleRepository(database.ArtcleDao())
+        ArticleRepository(database.ArticleDao())
     }
 
     fun provide(context: Context) {
-        database = Room.databaseBuilder(context, ArticleDatabase::class.java, "articles.db").build()
+        database = Room.databaseBuilder(
+            context.applicationContext,
+            ArticleDatabase::class.java,
+            "article_database"
+        ).build()
     }
 }

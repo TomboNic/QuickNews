@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.quicknews.model.Article
+import com.example.quicknews.model.Graph.articleRepository
 import com.example.quicknews.model.Screens
 import com.example.quicknews.screens.DetailScreen
 import com.example.quicknews.screens.NewsScreen
@@ -14,7 +15,9 @@ import com.example.quicknews.screens.NewsScreen
 
 @Composable
 fun NewsApp(navController: NavHostController) {
-    val newsViewModel: NewsViewModel = viewModel()
+    val newsViewModel: NewsViewModel = viewModel(
+        factory = ArticleViewModelFactory(articleRepository)
+    )
     val viewState by newsViewModel.newsState
     val currentCategory by newsViewModel.currentCategory
 

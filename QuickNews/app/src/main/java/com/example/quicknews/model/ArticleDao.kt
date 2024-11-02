@@ -16,7 +16,7 @@ abstract class ArticleDao {
     @Query("SELECT * FROM `articles-table`")
     abstract fun getAllArticles(): Flow<List<Article>>
 
-    @Query("SELECT * FROM `articles-table` where id = :id")
-    abstract fun getArticleById(id: Int): Flow<Article>
+    @Query("SELECT * FROM `articles-table` where articleId = :articleId")
+    abstract fun getArticleById(articleId: Int): Flow<Article>
 
 }

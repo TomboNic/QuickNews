@@ -2,6 +2,7 @@ package com.example.quicknews.model
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
@@ -15,8 +16,8 @@ data class NewsResponse(
 @Entity(tableName = "articles-table")
 @Parcelize
 data class Article(
-    @ColumnInfo("Article-source")
-    val source: Source,
+    @PrimaryKey(autoGenerate = true) val articleId: Int = 0,
+    @Embedded(prefix = "source_") val source: Source,
     @ColumnInfo("Article-author")
     val author: String?,
     @ColumnInfo("Article-title")
@@ -31,12 +32,11 @@ data class Article(
     val publishedAt: String,
     @ColumnInfo("Article-content")
     val content: String?,
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0L
+
 ):Parcelable
 
 @Parcelize
 data class Source(
-    val id: String?,
+    @ColumnInfo(name = "source_id") val id: String?,
     val name: String
 ):Parcelable
